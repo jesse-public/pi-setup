@@ -13,6 +13,6 @@ sudo echo $1 >> /etc/hostname
 
 sudo apt update
 sudo apt upgrade -y
-sudo apt install git docker.io docker-compose dnsutil -y
+sudo apt install git docker.io docker-compose dnsutils -y
 sudo usermod -aG docker ${USER}
 sudo reboot now
