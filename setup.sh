@@ -9,6 +9,9 @@
 echo 'alias ll="ls -la"' >> ~/.bash_aliases
 echo '' >> ~/.bash_aliases
 
+# TODO: SSH hardening
+
+
 sudo apt update
 sudo apt upgrade -y
 sudo apt install git docker.io docker-compose dnsutils -y
