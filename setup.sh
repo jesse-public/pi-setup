@@ -6,11 +6,9 @@
 #  exit 1
 #fi
 
-echo 'alias ll="ls -la"' >> ~/.bash_aliases
-echo '' >> ~/.bash_aliases
+cp ./bash_aliases ~/.bash_aliases
 
 # TODO: SSH hardening
-
 
 sudo apt update
 sudo apt upgrade -y
