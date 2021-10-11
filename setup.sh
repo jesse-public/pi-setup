@@ -11,8 +11,8 @@
 cp ./bash_aliases ~/.bash_aliases
 
 # SSH hardening
-#mv /etc/ssh/sshd_config /etc/ssh/sshd_config.orig
-cp ./sshd_config /etc/ssh/sshd_config
+sudo mv /etc/ssh/sshd_config /etc/ssh/sshd_config.orig
+sudo cp ./sshd_config /etc/ssh/sshd_config
 
 # Docker
 # sudo apt update
