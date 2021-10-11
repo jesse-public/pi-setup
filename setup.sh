@@ -1,24 +1,40 @@
 #!/usr/bin/env bash
 
-#if [ "$#" -ne 1 ]
-#then
-#  echo "Usage: ./setup arg1"
-#  exit 1
-#fi
+clean=''
+docker=''
+
+print_usage() {
+  printf "Usage: ./setup.sh [-c (do not backup configuration files)] [-d (setup docker)]"
+}
+
+while getopts 'cd' flag; do
+  case "${flag}" in
+    c) clean='true' ;;
+    d) docker='true' ;;
+    *) print_usage
+       exit 1 ;;
+  esac
+done
 
 # Aliases
-#cp ~/.bash_aliases ~/.bash_aliases.orig
+if [[clean != 'true']] then
+  cp ~/.bash_aliases ~/.bash_aliases.orig
+fi
 cp ./bash_aliases ~/.bash_aliases
 
 # SSH hardening
-sudo mv /etc/ssh/sshd_config /etc/ssh/sshd_config.orig
+if [[clean != 'true']] then
+  sudo mv /etc/ssh/sshd_config /etc/ssh/sshd_config.orig
+fi
 sudo cp ./sshd_config /etc/ssh/sshd_config
 
+sudo apt update && sudo apt upgrade -y
+
 # Docker
-# sudo apt update
-# sudo apt upgrade -y
-# sudo apt install git docker.io docker-compose dnsutils -y
-# sudo usermod -aG docker ${USER}
+if [[docker == 'true']] then
+  sudo apt install git docker.io docker-compose dnsutils -y
+  sudo usermod -aG docker ${USER}
+fi
 
 # RPI config
-# sudo raspi-config
+sudo raspi-config
