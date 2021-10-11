@@ -6,15 +6,19 @@
 #  exit 1
 #fi
 
+# Aliases
+#cp ~/.bash_aliases ~/.bash_aliases.orig
 cp ./bash_aliases ~/.bash_aliases
 
-# TODO: SSH hardening
+# SSH hardening
+#mv /etc/ssh/sshd_config /etc/ssh/sshd_config.orig
+cp ./sshd_config /etc/ssh/sshd_config
 
-sudo apt update
-sudo apt upgrade -y
-sudo apt install git docker.io docker-compose dnsutils -y
-sudo usermod -aG docker ${USER}
+# Docker
+# sudo apt update
+# sudo apt upgrade -y
+# sudo apt install git docker.io docker-compose dnsutils -y
+# sudo usermod -aG docker ${USER}
 
-sudo raspi-config
-
-sudo reboot now
+# RPI config
+# sudo raspi-config
