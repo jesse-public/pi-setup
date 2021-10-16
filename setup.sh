@@ -40,3 +40,6 @@ fi
 
 # RPI config
 sudo raspi-config
+
+# static IP
+echo "Remember to edit /etc/dhcpcd.conf to set static IP and DNS"
