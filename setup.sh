@@ -36,7 +36,8 @@ sudo apt update && sudo apt upgrade -y
 if [ docker == 'true' ]; then
   sudo apt install git docker.io docker-compose dnsutils -y
   sudo groupadd docker
-  sudo usermod -aG docker ${USER}
+  sudo usermod -aG docker $USER
+  newgrp docker
 fi
 
 # RPI config
