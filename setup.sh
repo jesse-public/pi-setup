@@ -35,6 +35,8 @@ sudo apt update && sudo apt upgrade -y
 # Docker
 if [ docker == 'true' ]; then
   sudo apt install git docker.io docker-compose dnsutils -y
+  sudo groupadd docker
+  newgrp docker 
   sudo usermod -aG docker ${USER}
 fi
 
