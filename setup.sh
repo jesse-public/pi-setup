@@ -75,11 +75,11 @@ fi
 # RPI config
 #sudo raspi-config
 
+# Update firmware
+#sudo rpi-update
+
 # Update bootloader
 sudo rpi-eeprom-update -a
-
-# Static IP
-echo "Remember to edit /etc/dhcpcd.conf to set static IP and DNS"
 
 # Update hostname
 originalhostname=$(cat /etc/hostname)
@@ -93,6 +93,15 @@ sudo sed -i "s/$originalhostname/$newhostname/g" /etc/hostname
 
 echo "Hostname is now $newhostname"
 
+# Print next steps
+echo ""
+echo "Next steps!!!"
+if [ "$vlan" = "true" ]; then
+  echo "  --> Edit /etc/network/interfaces.d/vlans"
+fi
+echo "  --> Edit /etc/dhcpcd.conf"
+echo ""
+
 # Reboot
-read -s -n 1 -p "Press any key to reboot"
+read -s -n 1 -p "Press any key to reboot..."
 sudo reboot
