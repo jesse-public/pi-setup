@@ -1,32 +1,35 @@
 #!/usr/bin/env bash
 
-clean=''
-docker=''
-vlan=''
+clean=""
+docker=""
+vlan=""
 
 print_usage() {
   printf "Usage: ./setup.sh [-c (do not backup configuration files)] [-d (setup docker)] [-v (enable vlans)]"
 }
 
-while getopts 'cdv' flag; do
+while getopts "cdv" flag; do
   case "${flag}" in
-    c) clean='true' ;;
-    d) docker='true' ;;
-    v) vlan='true' ;;
+    c)
+      clean="true"
+      echo "CLEANING"
+      ;;
+    d) docker="true" ;;
+    v) vlan="true" ;;
     *) print_usage
        exit 1 ;;
   esac
 done
 
 # Aliases
-if [ clean != 'true' ]; then
+if [ "$clean" != "true" ]; then
   cp ~/.bash_aliases ~/.bash_aliases.orig
 fi
 
 cp ./bash_aliases ~/.bash_aliases
 
 # SSH hardening
-if [ clean != 'true' ]; then
+if [ "$clean" != "true" ]; then
   sudo mv /etc/ssh/sshd_config /etc/ssh/sshd_config.orig
 fi
 
@@ -34,7 +37,7 @@ sudo cp ./sshd_config /etc/ssh/sshd_config
 
 sudo apt update && sudo apt upgrade -y
 
-if [ vlan == 'true' ]; then
+if [ "$vlan" == "true" ]; then
   sudo apt install vlan
   cat > /etc/network/interfaces.d/vlans << EOL
 # Update 10 to desired VLAN
@@ -63,7 +66,7 @@ EOL
 fi
 
 # Docker
-if [ docker == 'true' ]; then
+if [ "$docker" == "true" ]; then
   sudo apt install git docker.io docker-compose dnsutils -y
   sudo groupadd docker
   sudo usermod -aG docker $USER
