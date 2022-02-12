@@ -8,7 +8,7 @@ print_usage() {
   printf "Usage: ./setup.sh [-c (do not backup configuration files)] [-d (setup docker)] [-v (enable vlans)]"
 }
 
-while getopts 'cd' flag; do
+while getopts 'cdv' flag; do
   case "${flag}" in
     c) clean='true' ;;
     d) docker='true' ;;
