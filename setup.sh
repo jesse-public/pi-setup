@@ -74,7 +74,7 @@ fi
 #sudo raspi-config
 
 # Update bootloader
-sudo rpi-eeprom-update -r
+sudo rpi-eeprom-update -a
 
 # static IP
 echo "Remember to edit /etc/dhcpcd.conf to set static IP and DNS"
