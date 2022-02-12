@@ -10,26 +10,23 @@
 # possible, but leave them commented.  Uncommented options override the
 # default value.
 
-Protocol 2
+Include /etc/ssh/sshd_config.d/*.conf
+
 Port 22
 #AddressFamily any
 #ListenAddress 0.0.0.0
 #ListenAddress ::
 
-HostKey /etc/ssh/ssh_host_ed25519_key
 #HostKey /etc/ssh/ssh_host_rsa_key
 #HostKey /etc/ssh/ssh_host_ecdsa_key
-
-KexAlgorithms curve25519-sha256@libssh.org,curve25519-sha256
-Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com
-MACs hmac-sha2-512-etm@openssh.com
+HostKey /etc/ssh/ssh_host_ed25519_key
 
 # Ciphers and keying
 #RekeyLimit default none
 
 # Logging
-SyslogFacility AUTH
-LogLevel INFO
+#SyslogFacility AUTH
+#LogLevel INFO
 
 # Authentication:
 
@@ -38,6 +35,8 @@ PermitRootLogin no
 StrictModes yes
 MaxAuthTries 6
 MaxSessions 10
+
+PubkeyAuthentication yes
 
 # Expect .ssh/authorized_keys2 to be disregarded by default in future.
 AuthorizedKeysFile	.ssh/authorized_keys
@@ -94,7 +93,7 @@ X11Forwarding no
 #X11UseLocalhost yes
 #PermitTTY yes
 PrintMotd no
-PrintLastLog yes
+PrintLastLog no
 TCPKeepAlive no
 #PermitUserEnvironment no
 #Compression delayed
@@ -116,24 +115,19 @@ AcceptEnv LANG LC_*
 # override default of no subsystems
 Subsystem	sftp	/usr/lib/openssh/sftp-server
 
-# Password based logins are disabled - only public key based logins are allowed.
-AuthenticationMethods publickey
-PubkeyAuthentication yes
-
 # Example of overriding settings on a per-user basis
 #Match User anoncvs
 #	X11Forwarding no
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
+PasswordAuthentication no
 
-# Root login is not allowed for auditing reasons. This is because it's difficult to track which process belongs to which root user:
-#
-# On Linux, user sessions are tracking using a kernel-side session id, however, this session id is not recorded by OpenSSH.
-# Additionally, only tools such as systemd and auditd record the process session id.
-# On other OSes, the user session id is not necessarily recorded at all kernel-side.
-# Using regular users in combination with /bin/su or /usr/bin/sudo ensure a clear audit track.
-PermitRootLogin No
+Protocol 2
+
+KexAlgorithms curve25519-sha256@libssh.org,curve25519-sha256
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com
+MACs hmac-sha2-512-etm@openssh.com
 
 # Use kernel sandbox mechanisms where possible in unprivileged processes
 # Systrace on OpenBSD, Seccomp on Linux, seatbelt on MacOSX/Darwin, rlimit elsewhere.
