@@ -3,13 +3,17 @@
 clean=""
 docker=""
 vlan=""
+hostname=""
 
 print_usage() {
-  printf "Usage: ./setup.sh [-c (do not backup configuration files)] [-d (setup docker)] [-v (enable vlans)]"
+  printf "Usage: ./setup.sh -h hostname [-c (do not backup configuration files)] [-d (setup docker)] [-v (enable vlans)]"
 }
 
-while getopts "cdv" flag; do
+while getopts "h:cdv" flag; do
   case "${flag}" in
+    h)
+      hostname=$OPTARG
+      ;;
     c)
       clean="true"
       echo "CLEANING"
@@ -20,6 +24,10 @@ while getopts "cdv" flag; do
        exit 1 ;;
   esac
 done
+
+# Update hostname
+sed -i "s/raspberrypi/${hostname}/g"
+echo "$hostname" > /etc/hostname
 
 # Aliases
 if [ "$clean" != "true" ]; then
