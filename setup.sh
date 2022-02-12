@@ -6,28 +6,18 @@ vlan=""
 hostname=""
 
 print_usage() {
-  printf "Usage: ./setup.sh -h hostname [-c (do not backup configuration files)] [-d (setup docker)] [-v (enable vlans)]"
+  printf "Usage: ./setup.sh [-c (do not backup configuration files)] [-d (setup docker)] [-v (enable vlans)]"
 }
 
 while getopts "h:cdv" flag; do
   case "${flag}" in
-    h)
-      hostname=$OPTARG
-      ;;
-    c)
-      clean="true"
-      echo "CLEANING"
-      ;;
+    c) clean="true" ;;
     d) docker="true" ;;
     v) vlan="true" ;;
     *) print_usage
        exit 1 ;;
   esac
 done
-
-# Update hostname
-sed -i "s/raspberrypi/${hostname}/g"
-echo "$hostname" > /etc/hostname
 
 # Aliases
 if [ "$clean" != "true" ]; then
@@ -87,7 +77,21 @@ fi
 # Update bootloader
 sudo rpi-eeprom-update -a
 
-# static IP
+# Static IP
 echo "Remember to edit /etc/dhcpcd.conf to set static IP and DNS"
 
-echo "Reboot to complete eeprom update!"
+# Update hostname
+originalhostname=$(cat /etc/hostname)
+
+echo "Current hostname is $originalhostname"
+echo "Enter new hostname: "
+read newhostname
+
+sudo sed -i "s/$originalhostname/$newhostname/g" /etc/hosts
+sudo sed -i "s/$originalhostname/$newhostname/g" /etc/hostname
+
+echo "Hostname is now $newhostname"
+
+# Reboot
+read -s -n 1 -p "Press any key to reboot"
+sudo reboot
