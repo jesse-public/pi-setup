@@ -37,6 +37,7 @@ sudo apt update && sudo apt upgrade -y
 
 if [ "$vlan" == "true" ]; then
   sudo apt install vlan
+  mkdir -p /etc/network/interfaces.d
   cat > /etc/network/interfaces.d/vlans << EOL
 # Update 10 to desired VLAN
 #auto eth0.10
