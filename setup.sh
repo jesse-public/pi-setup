@@ -19,52 +19,48 @@ while getopts "h:cdv" flag; do
   esac
 done
 
-# Aliases
+sudo apt update && sudo apt upgrade -y
+
+# Add bash aliases
 if [ "$clean" != "true" ]; then
   cp ~/.bash_aliases ~/.bash_aliases.orig
 fi
-
 cp ./bash_aliases ~/.bash_aliases
 
-# SSH hardening
+# Harden SSH
 if [ "$clean" != "true" ]; then
   sudo mv /etc/ssh/sshd_config /etc/ssh/sshd_config.orig
 fi
-
 sudo cp ./sshd_config /etc/ssh/sshd_config
 
-sudo apt update && sudo apt upgrade -y
+# Add example static IP configuration
+cat >> /etc/network/interfaces << EOL
+# Example static IP configuration:
+#auto eth0
+#iface eth0 inet static
+#  address 192.168.0.200
+#  netmask 255.255.255.0
+#  gateway 192.168.0.1
+#  dns-nameservers 192.168.0.1
+EOL
 
+# Add example VLAN configuration
 if [ "$vlan" == "true" ]; then
   sudo apt install vlan
   mkdir -p /etc/network/interfaces.d
   cat > /etc/network/interfaces.d/vlans << EOL
-# Update 10 to desired VLAN
+# Example VLAN configuration:
 #auto eth0.10
-#iface eth0.10 inet manual
+#iface eth0.10 inet static
 #  vlan-raw-device eth0
+#  address 192.168.10.200
+#  netmask 255.255.255.0
+#  gateway 192.168.10.1
+#  dns-nameservers 192.168.10.1
 EOL
-  cat >> /etc/dhcpcd.conf << EOL
-# Static IP: LAN
-#interface eth0
-#static ip_address=192.168.0.10/24
-#static routers=192.168.0.1
-#static domain_name_servers=192.168.0.10 192.168.0.10
-
-# Static IP: VLAN 10
-#interface eth0.10
-#static ip_address=192.168.10.2/24
-#static routers=192.168.10.1
-#static domain_name_servers=
-EOL
-  echo "VLANS enabled, but not yet configured!"
-  echo "The following files must be configured to support the desired VLANs:"
-  echo "  * /etc/network/interfaces.d/vlans"
-  echo "  * /etc/dhcpcd.conf"
-  echo "Then reboot and run hostname -I to verify changes"
 fi
 
-# Docker
+# Docker Setup
 if [ "$docker" == "true" ]; then
   sudo apt install git docker.io docker-compose dnsutils -y
   sudo groupadd docker
@@ -72,6 +68,7 @@ if [ "$docker" == "true" ]; then
   newgrp docker
 fi
 
+# Upgrades
 # RPI config
 #sudo raspi-config
 
@@ -81,27 +78,26 @@ fi
 # Update bootloader
 sudo rpi-eeprom-update -a
 
-# Update hostname
+# Hostname
 originalhostname=$(cat /etc/hostname)
-
 echo "Current hostname is $originalhostname"
 echo "Enter new hostname: "
 read newhostname
-
 sudo sed -i "s/$originalhostname/$newhostname/g" /etc/hosts
 sudo sed -i "s/$originalhostname/$newhostname/g" /etc/hostname
-
 echo "Hostname is now $newhostname"
 
 # Print next steps
-echo ""
-echo "Next steps!!!"
-if [ "$vlan" = "true" ]; then
-  echo "  --> Edit /etc/network/interfaces.d/vlans"
-fi
-echo "  --> Edit /etc/dhcpcd.conf"
-echo ""
+echo "******************"
+echo "*** Next steps ***"
+echo "  --> Configure static IP. A template was added to:"
+echo "      /etc/network/interfaces"
 
-# Reboot
-read -s -n 1 -p "Press any key to reboot..."
-sudo reboot
+if [ "$vlan" == "true" ]; then
+  echo "  --> Configure VLANs. A template was added to:"
+  echo "      /etc/network/interfaces.d/vlans"
+  echo "Afterwards, reboot and run hostname -I to verify changes"
+fi
+
+echo ""
+echo "After performing above steps, you should reboot."
